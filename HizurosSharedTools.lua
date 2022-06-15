@@ -246,13 +246,11 @@ local function Supporter_AddStyle2(addon,credit)
 	local sIndex,hasNoEntries = {1,1,1},true;
 	for s=1, #supporter, 4 do
 		local name = Supporter_GetName(supporter[s]);
-		--ns:debug(s,name);
 		for r=3,1,-1 do
 			local rInvert = 3-r;
 			local rIndex,objs = s+r;
 			if supporter[rIndex] then
 				objs = thisAddOn(addon,supporter[rIndex]);
-				ns:debug(name,objs and unpack(objs) or "false");
 			end
 			if objs then
 				local res = {name};
