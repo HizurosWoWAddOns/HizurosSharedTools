@@ -1,5 +1,5 @@
 
-local MAJOR, MINOR = "HizurosSharedTools", 1;
+local MAJOR, MINOR = "HizurosSharedTools", 2;
 local lib = LibStub:NewLibrary(MAJOR, MINOR);
 if not lib then return end
 
@@ -95,8 +95,8 @@ do
 		-- special mentions
 		{"battlenet","liquidbase", false,"/", "deathknight","Merith", false,"(Author of DuffedUI)"},false,false,{"For idea and first code to add quest level to quest tracker :)",11},
 		{"battlenet","pas06",      false,"/", "curseforge","Bullseiify"   },{"deDE",4,6,10,7,16},false,{"For idea to the keystroke replace function",11},
-		{"github","TegraGG (Github)"},      false,false,{"For helpfull pull request in github.",16},
-		{"github","bruteostrich (Github)"}, false,false,{"For helpfull pull request in github.",6},
+		{"github","TegraGG (Github)"},      false,false,{"For helpfull pull request on github.",16},
+		{"github","bruteostrich (Github)"}, false,false,{"For helpfull pull request on github.",6},
 
 		-- donations
 
