@@ -130,6 +130,7 @@ do
 		{"curseforge","dropdb"},		{"ruRU",7},false,false,
 		{"curseforge","Igara86"},		{"ruRU",7},false,false,
 		{"curseforge","Ananhaid"},		{"zhCN",7},false,false,
+		{"curseforge","Der_Adrinator"}, {"deDE",4},false,false,
 	}
 
 	--local foreignAddOns = {}
