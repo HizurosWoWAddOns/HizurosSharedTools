@@ -1,9 +1,11 @@
 
-local MAJOR, MINOR = "HizurosSharedTools", 2;
+local MAJOR, MINOR = "HizurosSharedTools", 3;
+---@class HizurosSharedTools
 local lib = LibStub:NewLibrary(MAJOR, MINOR);
 if not lib then return end
 
-local _G,string,tonumber,rawset,type = _G,string,tonumber,rawset,type
+local _G,tostringall,tonumber,rawset,type = _G,tostringall,tonumber,rawset,type
+local ConsolePrint = ConsolePrint;
 
 local LC = LibStub("LibColors-1.0");
 local C = LC.color;
@@ -23,11 +25,13 @@ local L = setmetatable({},{
 L["ThxSpecial"] = "Special thanks at..."
 L["ThxLocale"] = "Thanks for the translations..."
 L["ThxSupport"] = "Thanks for the support..."
+L["ThxDonation"] = "Thanks for the donation..."
 
 if LOCALE_deDE then
 	L["ThxSpecial"] = "Speziellen Dank an..."
 	L["ThxLocale"] = "Danke für die Übersetzungen..."
 	L["ThxSupport"] = "Danke für die Unterstützung..."
+	L["ThxDonation"] = "Danke für die Spende..."
 	L["Credit"] = "Anerkennung"
 	L["Thanks at..."] = "Danke an..."
 end
@@ -40,7 +44,7 @@ do
 
 	local function colorize(ns,...)
 		if not ns.addon then
-			ConsolePrint(MAJOR,debugstack())
+			ConsolePrint(MAJOR,debugstack());
 		end
 		local colors = ns.printColors or defaultColors; --
 		local t,c,a1 = {tostringall(...)},1,...;
@@ -70,6 +74,10 @@ do
 		print(colorize(ns,"<debug>",...));
 	end
 
+	--- Add print functions to given addon namespace
+	---@param ns table AddOn namespace
+	---@param addon string AddOn name
+	---@param short string AddOn short name
 	function lib.RegisterPrint(ns,addon,short)
 		ns.addon,ns.addon_short = addon,short;
 		ns.print,ns.debug,ns.debugPrint = ns_print,ns_debug,ns_debugPrint;
@@ -91,7 +99,7 @@ do
 		-- don't sort by name. add new at the end
 	};
 
-	local supporter = {
+	local supporter = { -- {<color>,<name>}, <localizations>, <donations>, <special text>,
 		-- special mentions
 		{"battlenet","liquidbase", false,"/", "deathknight","Merith", false,"(Author of DuffedUI)"},false,false,{"For idea and first code to add quest level to quest tracker :)",11},
 		{"battlenet","pas06",      false,"/", "curseforge","Bullseiify"   },{"deDE",4,6,10,7,16},false,{"For idea to the keystroke replace function",11},
@@ -99,6 +107,7 @@ do
 		{"github","bruteostrich (Github)"}, false,false,{"For helpfull pull request on github.",6},
 
 		-- donations
+		{"paypal","Nanci"}, false, "PP", false,
 
 		-- localizations
 		{"curseforge","Nelfym"},		{"frFR",1},false,false,
@@ -203,8 +212,14 @@ do
 	end
 
 	local function Supporter_GetDonationPlatforms(entries)
+		local tV
 		for i,v in ipairs(entries) do
-			entries[i] = donation_platforms[v] or v;
+			tV = type(v);
+			if tV=="string" then
+				entries[i] = donation_platforms[v] or v;
+			elseif tV=="table" then
+				-- ??? {<platform>,<currency>,<amount>,<free text>}
+			end
 		end
 		return table.concat(entries,", ");
 	end
@@ -217,7 +232,7 @@ do
 			credit.args.thanksLine.hidden=true
 		end
 
-		local prev = false;
+		local prev = nil;
 
 		local sIndex,hasNoEntries = {1,1,1},true;
 		for s=1, #supporter, 4 do
@@ -263,6 +278,10 @@ do
 		return hasNoEntries;
 	end
 
+	-- Add custom credit
+	---@param addon string
+	---@param creditSection? table
+	---@param style? string
 	function lib.AddCredit(addon,creditSection,style)
 		local credit = CopyTable(creditTemplate);
 		credit.name = addon.." / "..L["Credit"]
@@ -294,7 +313,7 @@ do
 	local function CalculateOffset(panel)
 		local pType = type(panel);
 		local buttonCount = #InterfaceOptionsFrameAddOns.buttons;
-		local buttonHeight = InterfaceOptionsFrameAddOns.buttons[1]:GetHeight();
+		--local buttonHeight = InterfaceOptionsFrameAddOns.buttons[1]:GetHeight();
 
 		local elementsBefore = 0;
 		for i, element in next, INTERFACEOPTIONS_ADDONCATEGORIES do
@@ -314,7 +333,7 @@ do
 		return 0;
 	end
 
-	local function BlizzOptions_ExpandOnShowHook(self)
+	--[[local function BlizzOptions_ExpandOnShowHook(self)
 		local p = false;
 		for i, button in next, InterfaceOptionsFrameAddOns.buttons do
 			if button.element then
@@ -330,14 +349,16 @@ do
 				-- SetOffset(offset)
 			end
 		end
-	end
+	end]]
 
+	---@param opts table
 	function lib.BlizzOptions_ExpandOnShow(opts)
 		if opts.hasExpandOnShowHook then return end
 		--opts:HookScript("OnShow", BlizzOptions_ExpandOnShowHook);
 		opts.hasExpandOnShowHook = true;
 	end
 
+	---@param panel table
 	function lib.InterfaceOptionsFrame_OpenToCategory(panel)
 		InterfaceOptionsFrame_OpenToCategory(panel);
 
