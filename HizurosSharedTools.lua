@@ -12,6 +12,7 @@ local C = LC.color;
 LC.colorset({
 	["curseforge"] = "ff8000", --"F16436"
 	["github"] = "adbac7",
+	["paypal"] = "44dd44",
 });
 
 local L = setmetatable({},{
@@ -90,8 +91,8 @@ lib.RegisterPrint(ns,MAJOR,"HzST");
 
 
 --== shared credits page ==--
-do
-	local donation_platforms = {PP="Paypal",PA="Patreon",GH="Github"};
+do -- 013088, 0070E0
+	local donation_platforms = {PP="|cff375388Pay|cff5a9de0pal|r",PA="Patreon",GH="Github"};
 
 	local myAddOns = {
 		"AFK_fullscreen","AuctionSellers","BestSellButton","Broker_Everything","CommunityInfo","FarmHud","FollowerLocationInfo","GarrisonRandomNPCs",
@@ -99,47 +100,47 @@ do
 		-- don't sort by name. add new at the end
 	};
 
-	local supporter = { -- {<color>,<name>}, <localizations>, <donations>, <special text>,
+	local supporter = { -- {<color>,<name>}, <localizations>, <donations>, <otherSupportTypes>, <special text>,
 		-- special mentions
-		{"battlenet","liquidbase", false,"/", "deathknight","Merith", false,"(Author of DuffedUI)"},false,false,{"For idea and first code to add quest level to quest tracker :)",11},
-		{"battlenet","pas06",      false,"/", "curseforge","Bullseiify"   },{"deDE",4,6,10,7,16},false,{"For idea to the keystroke replace function",11},
-		{"github","TegraGG (Github)"},      false,false,{"For helpfull pull request on github.",16},
-		{"github","bruteostrich (Github)"}, false,false,{"For helpfull pull request on github.",6},
+		{"battlenet","liquidbase", false,"/", "deathknight","Merith", false,"(Author of DuffedUI)"},false,false,false,{"For idea and first code to add quest level to quest tracker :)",11},
+		{"battlenet","pas06",      false,"/", "curseforge","Bullseiify"   },{"deDE",4,6,10,7,16},false,false,{"For idea to the keystroke replace function",11},
+		{"github","TegraGG (Github)"},      false,false,false,{"For helpfull pull request on github.",16},
+		{"github","bruteostrich (Github)"}, false,false,false,{"For helpfull pull request on github.",6},
 
 		-- donations
-		{"paypal","Nanci"}, false, "PP", false,
+		{"paypal","Nanci"}, false, {"PP",true}, false, false,
 
 		-- localizations
-		{"curseforge","Nelfym"},		{"frFR",1},false,false,
-		{"curseforge","pczombie09"},	{"koKR",1},false,false,
-		{"curseforge","KARMA_Zz"},		{"ruRU",1},false,false,
-		{"curseforge","BNS333"},		{"zhTW",1},false,false,
-		{"curseforge","ZamestoTV"},		{"ruRU",2,5,9,13,15},false,false,
-		{"curseforge","Nierhain"},		{"deDE",4},false,false,
-		{"curseforge","Braincell1980"},	{"frFR",4,13},false,false,
-		{"curseforge","netaras"},		{"koKR",4,6},false,false,
-		{"curseforge","적셔줄게"},		{"koKR",4},false,false,
-		{"curseforge","cikichen"},		{"zhCN",4,"zhTW",4},false,false,
-		{"curseforge","sanxy00"},		{"zhCN",4},false,false,
-		{"curseforge","雪夜霜刀"},		{"zhCN",4},false,false,
-		{"curseforge","半熟魷魚"},		{"zhTW",4},false,false,
-		{"curseforge","Lightuky"},		{"frFR",5},false,false,
-		{"curseforge","TomasRipley"},	{"ruRU",5},false,false,
-		{"curseforge","Dathwada"},		{"deDE",6},false,false,
-		{"curseforge","supahmexman"},	{"esES",6},false,false,
-		{"curseforge","justregular16"},	{"esMX",6},false,false,
-		{"curseforge","Zickwik"},		{"frFR",6},false,false,
-		{"curseforge","oxscott"},		{"itIT",6},false,false,
-		{"curseforge","g0ldenev1l"},	{"zhCN",6},false,false,
-		{"curseforge","mccma"},			{"zhTW",6},false,false,
-		{"curseforge","Tumbleweed_DSA"},{"deDE",7},false,false,
-		{"curseforge","Dabeuliou"},		{"frFR",7},false,false,
-		{"curseforge","unrealcrom96"},	{"koKR",7},false,false,
-		{"curseforge","Canettieri"},	{"ptBR",7},false,false,
-		{"curseforge","dropdb"},		{"ruRU",7},false,false,
-		{"curseforge","Igara86"},		{"ruRU",7},false,false,
-		{"curseforge","Ananhaid"},		{"zhCN",7},false,false,
-		{"curseforge","Der_Adrinator"}, {"deDE",4},false,false,
+		{"curseforge","Nelfym"},		{"frFR",1},false,false,false,
+		{"curseforge","pczombie09"},	{"koKR",1},false,false,false,
+		{"curseforge","KARMA_Zz"},		{"ruRU",1},false,false,false,
+		{"curseforge","BNS333"},		{"zhTW",1},false,false,false,
+		{"curseforge","ZamestoTV"},		{"ruRU",2,5,9,13,15},false,false,false,
+		{"curseforge","Nierhain"},		{"deDE",4},false,false,false,
+		{"curseforge","Braincell1980"},	{"frFR",4,13},false,false,false,
+		{"curseforge","netaras"},		{"koKR",4,6},false,false,false,
+		{"curseforge","적셔줄게"},		{"koKR",4},false,false,false,
+		{"curseforge","cikichen"},		{"zhCN",4,"zhTW",4},false,false,false,
+		{"curseforge","sanxy00"},		{"zhCN",4},false,false,false,
+		{"curseforge","雪夜霜刀"},		{"zhCN",4},false,false,false,
+		{"curseforge","半熟魷魚"},		{"zhTW",4},false,false,false,
+		{"curseforge","Lightuky"},		{"frFR",5},false,false,false,
+		{"curseforge","TomasRipley"},	{"ruRU",5},false,false,false,
+		{"curseforge","Dathwada"},		{"deDE",6},false,false,false,
+		{"curseforge","supahmexman"},	{"esES",6},false,false,false,
+		{"curseforge","justregular16"},	{"esMX",6},false,false,false,
+		{"curseforge","Zickwik"},		{"frFR",6},false,false,false,
+		{"curseforge","oxscott"},		{"itIT",6},false,false,false,
+		{"curseforge","g0ldenev1l"},	{"zhCN",6},false,false,false,
+		{"curseforge","mccma"},			{"zhTW",6},false,false,false,
+		{"curseforge","Tumbleweed_DSA"},{"deDE",7},false,false,false,
+		{"curseforge","Dabeuliou"},		{"frFR",7},false,false,false,
+		{"curseforge","unrealcrom96"},	{"koKR",7},false,false,false,
+		{"curseforge","Canettieri"},	{"ptBR",7},false,false,false,
+		{"curseforge","dropdb"},		{"ruRU",7},false,false,false,
+		{"curseforge","Igara86"},		{"ruRU",7},false,false,false,
+		{"curseforge","Ananhaid"},		{"zhCN",7},false,false,false,
+		{"curseforge","Der_Adrinator"}, {"deDE",4},false,false,false,
 	}
 
 	--local foreignAddOns = {}
@@ -212,14 +213,15 @@ do
 	end
 
 	local function Supporter_GetDonationPlatforms(entries)
-		local tV
 		for i,v in ipairs(entries) do
-			tV = type(v);
-			if tV=="string" then
-				entries[i] = donation_platforms[v] or v;
-			elseif tV=="table" then
-				-- ??? {<platform>,<currency>,<amount>,<free text>}
-			end
+			entries[i] = donation_platforms[v] or v;
+		end
+		return table.concat(entries,", ");
+	end
+
+	local function Supporter_GetSupport(entries)
+		for i,v in ipairs(entries)do
+			entries[i] = v;
 		end
 		return table.concat(entries,", ");
 	end
@@ -235,10 +237,11 @@ do
 		local prev = nil;
 
 		local sIndex,hasNoEntries = {1,1,1},true;
-		for s=1, #supporter, 4 do
+		local labels = {"ThxLocale","ThxDonation","ThxSupport"}
+		for s=1, #supporter, 5 do
 			local name = Supporter_GetName(supporter[s]);
-			for r=3,1,-1 do
-				local rInvert = 3-r;
+			for r=4,1,-1 do
+				local rInvert = 4-r;
 				local rIndex,objs = s+r;
 				if supporter[rIndex] then
 					objs = thisAddOn(addon,supporter[rIndex]);
@@ -250,6 +253,8 @@ do
 						tinsert(res,Supporter_GetLanguages(objs));
 					elseif r==2 then -- donations
 						tinsert(res,Supporter_GetDonationPlatforms(objs));
+					elseif r==3 then -- other support types
+						tinsert(res,Supporter_GetSupport(objs));
 					else -- specials
 						tAppendAll(res,objs);
 						width="full";
@@ -264,7 +269,7 @@ do
 				if objs and not credit.args["header-"..r] then
 					credit.args["header-"..r] = CopyTable(descLargeTemplate);
 					credit.args["header-"..r].order = rInvert*1000;
-					credit.args["header-"..r].name = C("cyan",(r==1 and L["ThxLocale"]) or (r==2 and L["ThxSupport"]) or L["ThxSpecial"]);
+					credit.args["header-"..r].name = C("cyan",L[labels[r] or "ThxSpecial"]);
 
 					if prev then
 						credit.args[prev].name = "|n"..credit.args[prev].name;
