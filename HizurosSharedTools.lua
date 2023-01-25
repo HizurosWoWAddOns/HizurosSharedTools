@@ -96,7 +96,7 @@ do -- 013088, 0070E0
 
 	local myAddOns = {
 		"AFK_fullscreen","AuctionSellers","BestSellButton","Broker_Everything","CommunityInfo","FarmHud","FollowerLocationInfo","GarrisonRandomNPCs",
-		"GatherMate2_ImportExport","GuildApplicantTracker","HizurosToolbox","HzFontPack1","LFR_of_the_past","QuickRoutes","StayClassy","TooltipRealmInfo",
+		"GatherMate2_ImportExport","GuildApplicantTracker","HizurosToolbox","HzFontPack1","LFR [of the past]","QuickRoutes","StayClassy","TooltipRealmInfo",
 		-- don't sort by name. add new at the end
 	};
 
@@ -106,6 +106,7 @@ do -- 013088, 0070E0
 		{"battlenet","pas06",      false,"/", "curseforge","Bullseiify"   },{"deDE",4,6,10,7,16},false,false,{"For idea to the keystroke replace function",11},
 		{"github","TegraGG (Github)"},      false,false,false,{"For helpfull pull request on github.",16},
 		{"github","bruteostrich (Github)"}, false,false,false,{"For helpfull pull request on github.",6},
+		{"github","fuba82 (Github)"}, false,false,false,{"For idea to use hooksecurefunc on mixin table.",13},
 
 		-- donations
 		{"paypal","Nanci"}, false, {"PP",true}, false, false,
@@ -236,7 +237,7 @@ do -- 013088, 0070E0
 
 		local prev = nil;
 
-		local sIndex,hasNoEntries = {1,1,1},true;
+		local sIndex,hasNoEntries = {1,1,1,1},true;
 		local labels = {"ThxLocale","ThxDonation","ThxSupport"}
 		for s=1, #supporter, 5 do
 			local name = Supporter_GetName(supporter[s]);
@@ -248,7 +249,7 @@ do -- 013088, 0070E0
 				end
 				if objs then
 					local res = {name};
-					local width = "normal";
+					local width,size = "normal",nil;
 					if r==1 then -- translations
 						tinsert(res,Supporter_GetLanguages(objs));
 					elseif r==2 then -- donations
@@ -258,24 +259,22 @@ do -- 013088, 0070E0
 					else -- specials
 						tAppendAll(res,objs);
 						width="full";
+						size="medium";
 					end
 					local entry = CopyTable(descLargeTemplate);
 					entry.order = rInvert*1000+sIndex[r];
 					entry.name = table.concat(res,"|n");
 					entry.width = width;
+					if size then
+						entry.fontSize = size;
+					end
 					credit.args["supporter-"..s.."-"..r] = entry;
 					sIndex[r] = sIndex[r] + 1;
 				end
 				if objs and not credit.args["header-"..r] then
 					credit.args["header-"..r] = CopyTable(descLargeTemplate);
 					credit.args["header-"..r].order = rInvert*1000;
-					credit.args["header-"..r].name = C("cyan",L[labels[r] or "ThxSpecial"]);
-
-					if prev then
-						credit.args[prev].name = "|n"..credit.args[prev].name;
-					end
-
-					prev = "header-"..r;
+					credit.args["header-"..r].name = "|n"..C("cyan",L[labels[r] or "ThxSpecial"]);
 					hasNoEntries = false
 				end
 			end
