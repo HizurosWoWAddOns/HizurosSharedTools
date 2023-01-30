@@ -142,6 +142,7 @@ do -- 013088, 0070E0
 		{"curseforge","Igara86"},		{"ruRU",7},false,false,false,
 		{"curseforge","Ananhaid"},		{"zhCN",7},false,false,false,
 		{"curseforge","Der_Adrinator"}, {"deDE",4},false,false,false,
+		{"curseforge","Araldwenn"},		{"frFR",4},false,false,false,
 	}
 
 	--local foreignAddOns = {}
@@ -290,9 +291,11 @@ do -- 013088, 0070E0
 		local credit = CopyTable(creditTemplate);
 		credit.name = addon.." / "..L["Credit"]
 		--credit.args = {};
+		--[[
 		if tonumber(order) then
 			credit.order = order;
 		end
+		--]]
 
 		-- add supporter
 		local isEmpty = Supporter_AddStyle(addon,credit);
