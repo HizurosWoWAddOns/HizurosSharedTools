@@ -8,4 +8,8 @@
 ## SavedVariables:
 ## OptionalDeps: LibStub, CallbackHandler-1.0, Ace3, LibColors-1.0
 
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+libs\LibColors-1.0\LibColors-1.0.lua
+
 HizurosSharedTools.lua
