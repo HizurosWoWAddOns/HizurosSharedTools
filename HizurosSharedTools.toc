@@ -4,6 +4,7 @@
 ## Title: HizurosSharedTools
 ## Notes: My little shared tools library for my addons
 ## Author: Hizuro
+## IconTexture: 986485
 ## Version: @project-version@
 ## SavedVariables:
 ## OptionalDeps: LibStub, CallbackHandler-1.0, Ace3, LibColors-1.0
