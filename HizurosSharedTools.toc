@@ -1,5 +1,5 @@
 ## Interface: 100207
-## Interface-Wrath: 40400
+## Interface-Cata: 40400
 ## Interface-Classic: 11502
 ## Title: HizurosSharedTools
 ## Notes: My little shared tools library for my addons
