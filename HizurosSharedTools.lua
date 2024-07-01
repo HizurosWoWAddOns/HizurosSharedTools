@@ -1,5 +1,5 @@
 
-local MAJOR, MINOR = "HizurosSharedTools", 3;
+local MAJOR, MINOR = "HizurosSharedTools", tonumber((gsub("@project-version@","r",""))) or 9999;
 ---@class HizurosSharedTools
 local lib = LibStub:NewLibrary(MAJOR, MINOR);
 if not lib then return end
