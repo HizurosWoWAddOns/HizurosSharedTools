@@ -383,19 +383,7 @@ do
 
 	---@param panel table
 	function lib.InterfaceOptionsFrame_OpenToCategory(panel)
-		InterfaceOptionsFrame_OpenToCategory(panel);
-		local offset = CalculateOffset(panel);
-		if offset>0 then
-			if InterfaceOptionsFrame.selectedTab==1 then
-				InterfaceOptionsFrame.selectedTab=2;
-				InterfaceOptionsFrame_TabOnClick();
-			end
-			FauxScrollFrame_SetOffset(InterfaceOptionsFrameAddOnsList,offset);
-			InterfaceOptionsFrameAddOnsList:SetVerticalScroll(offset);
-			--FauxScrollFrame_GetOffset(InterfaceOptionsFrameAddOnsList)
-		end
-
-		InterfaceOptionsFrame_OpenToCategory(panel);
+		Settings.OpenToCategory(panel)
 	end
 end
 
