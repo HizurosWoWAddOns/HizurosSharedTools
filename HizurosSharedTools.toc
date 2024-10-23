@@ -1,6 +1,6 @@
-## Interface: 110200
+## Interface: 110005
 ## Interface-Cata: 40400
-## Interface-Classic: 11503
+## Interface-Classic: 11504
 ## Title: HizurosSharedTools
 ## Notes: My little shared tools library for my addons
 ## Author: Hizuro
