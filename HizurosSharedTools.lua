@@ -459,6 +459,16 @@ lib.deprecated = {
 
 	C_Reputation = {
 		_GetFactionData = function(i,fSuffix)
+			if C_Reputation and C_Reputation.GetFactionInfo then
+				local info = C_Reputation.GetFactionInfo(i)
+				if type(info)=="table" then
+					return info;
+				end
+			end
+			local fName = "GetFactionInfo"..(fSuffix=="ID" and "ByID" or "");
+			if not _G[fName] then
+				return;
+			end
 			local info = {};
 			info.name,info.description,info.reaction,info.currentReactionThreshold,info.nextReactionThreshold,info.currentStanding,info.atWarWith,
 			info.canToggleAtWar,info.isHeader,info.isCollapsed,info.hasRep,info.isWatched,info.isChild,
