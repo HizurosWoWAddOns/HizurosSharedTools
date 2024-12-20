@@ -457,6 +457,18 @@ lib.deprecated = {
 		end,
 	},
 
+	C_GossipInfo = {
+		GetFriendshipReputation = function(friendshipFactionID)
+			if C_GossipInfo and C_GossipInfo.GetFriendshipReputation then
+				return C_GossipInfo.GetFriendshipReputation(friendshipFactionID);
+			end
+			local info = {reverseColor=false,overrideColor=0};
+			-- friendID, friendRep, friendMaxRep, friendName, friendText, friendTexture, friendTextLevel, friendThreshold, nextFriendThreshold
+			info.friendshipFactionID, info.standing, info.maxRep, info.name, info.text, info.texture, info.reaction, info.reactionThreshold, info.nextThreshold = GetFriendshipReputation(friendshipFactionID);
+			return info;
+		end
+	},
+
 	C_Reputation = {
 		_GetFactionData = function(i,fSuffix)
 			if C_Reputation and C_Reputation.GetFactionInfo then
