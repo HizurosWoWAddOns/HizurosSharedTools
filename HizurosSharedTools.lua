@@ -43,9 +43,19 @@ do
 	-- If you want your own colors add a table named printColors in your addon namespace.
 	-- count of entries is not limited.
 
+	-- Patch 11.1 - Blizzard filtering all messages to console (ConsolePrint/C_Log.LogMessage) from third party addons.
+	-- Wonderful tool to avoid bothering players with accidentally forgotten debug messages.
+	-- But I have to get around Console Print. I hope that won't be taken away from me too.
+	local function _ConsolePrint(...)
+		if not _G["DeveloperConsole"] then
+			return
+		end
+		DeveloperConsole:AddMessage(string.join(" ",...))
+	end
+
 	local function colorize(ns,...)
 		if not ns.addon then
-			ConsolePrint(MAJOR,debugstack());
+			_ConsolePrint(MAJOR,debugstack());
 		end
 		local colors = ns.printColors or defaultColors; --
 		local t,c,a1 = {tostringall(...)},1,...;
@@ -67,7 +77,7 @@ do
 	end
 
 	local function ns_debug(ns,...)
-		ConsolePrint(date("|cff999999%X|r"),colorize(ns,"<debug>",...));
+		_ConsolePrint(date("|cff999999%X|r"),colorize(ns,"<debug>",...));
 	end
 
 	local function ns_debugPrint(ns,...)
@@ -76,7 +86,7 @@ do
 	end
 
 	function lib.debug(...)
-		ConsolePrint(date("|cff999999%X|r"),colorize({addon=MAJOR},"<debug>",...));
+		_ConsolePrint(date("|cff999999%X|r"),colorize({addon=MAJOR},"<debug>",...));
 	end
 
 	--- Add print functions to given addon namespace
