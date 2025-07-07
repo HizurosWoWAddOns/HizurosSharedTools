@@ -717,3 +717,23 @@ do
 		end
 	end
 end
+
+--== MapPin or TomTom ==--
+do
+	function lib.AddWaypoint(mapId, x,y, label, useTomTom, addon)
+		local TomTom = _G["TomTom"];
+		if TomTom and TomTom.AddWaypoint and useTomTom then
+			TomTom:AddWaypoint(mapId,x/100,y/100,{
+				title = label,
+				from = addon,
+				persistent = nil,
+				minimap = true,
+				world = true
+			});
+			-- Thanks @ fuba82@github for reminding me. i've forgot to add this function content. :-)
+		else -- as option and fallback
+			_G["DEFAULT_CHAT_FRAME"]:AddMessage("\124cffffff00\124Hworldmap:"..mapId..":"..(x*100)..":"..(y*100).."\124h[\124A:Waypoint-MapPin-ChatIcon:13:13:0:0\124a "..label.."-Kartenmarkierung]\124h\124r");
+		end
+	end
+end
+
