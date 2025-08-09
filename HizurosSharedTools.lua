@@ -115,13 +115,27 @@ do -- 013088, 0070E0
 		-- don't sort by name. add new at the end
 	};
 
+	local github_pr_s = "For pull request on github."
+	local github_pr_p = "For %d pull requests on github."
 	local supporter = { -- {<color>,<name>}, <localizations>, <donations>, <otherSupportTypes>, <special text>,
 		-- special mentions
-		{"battlenet","liquidbase", false,"/", "deathknight","Merith", false,"(Author of DuffedUI)"},false,false,false,{"For idea and first code to add quest level to quest tracker :)",11},
-		{"battlenet","pas06",      false,"/", "curseforge","Bullseiify"   },{"deDE",4,6,10,7,16},false,false,{"For idea to the keystroke replace function",11},
-		{"github","TegraGG (Github)"},      false,false,false,{"For helpfull pull request on github.",16},
-		{"github","bruteostrich (Github)"}, false,false,false,{"For helpfull pull request on github.",6},
+		{"battlenet","liquidbase",false,"/", "deathknight","Merith", false,"(Author of DuffedUI)"},false,false,false,{"For idea and first code to add quest level to quest tracker :)",11},
+		{"battlenet","pas06",false,"/", "curseforge","Bullseiify"   },{"deDE",4,6,10,7,16},false,false,{"For idea to the keystroke replace function",11},
+		{"github","TegraGG (Github)"},false,false,false,{github_pr_s,16},
+		{"github","bruteostrich (Github)"},false,false,false,{github_pr_s,6},
 		{"github","fuba82 (Github)"}, false,false,false,{"For idea to use hooksecurefunc on mixin table.",13},
+		{"github","flaicher (Github)"},false,false,false,{github_pr_s,3},
+		{"github","BelegCufea (Github)"},false,false,false,{github_pr_p:format(2),3},
+		{"github","kanegasi (Github)"},false,false,false,{github_pr_s,3},
+		{"github","Brixus3 (Github)"},false,false,false,{github_pr_p:format(2),3},
+		{"github","4C51 (Github)"},false,false,false,{github_pr_s,3},
+		{"github","agentschmitt (Github)"},false,false,false,{github_pr_s,3},
+		{"github","lowlee (Github)"},false,false,false,{github_pr_s,3},
+		{"github","Sockdolager (Github)"},false,false,false,{github_pr_s,6},
+		{"github","MrStrugglez (Github)"},false,false,false,{github_pr_s,6},
+		{"github","tucomel (Github)"},false,false,false,{github_pr_s,6},
+ 		{"github","QartemisT (Github)"},false,false,false,{github_pr_s,13},
+		{"github","lkshrk (Github)"},false,false,false,{github_pr_p:format(2),16},
 
 		-- donations
 		{"paypal","Nanci"}, false, {"PP",true}, false, false,
