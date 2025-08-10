@@ -80,6 +80,48 @@ do
 		_ConsolePrint(date("|cff999999%X|r"),colorize(ns,"<debug>",...));
 	end
 
+	local dumpTable
+	local insStr = "  "
+	function dumpTable(t,res,inset)
+		local tmp,isAssoc,i,ins = {},false,"  ";
+		res,inset = res or {},inset or 0;
+		ins = strrep(insStr,inset);
+
+		if inset==0 then
+			tinsert(res,ins.."{");
+		end
+
+		for k,v in pairs(t)do
+			local tk = type(k)
+			if type(v)=="table" then
+				if tk=="number" then
+					tinsert(res,ins..i.."{ -- ["..k.."]");
+				else
+					tinsert(res,ins..i.."["..k.."] = {");
+				end
+				dumpTable(v,res,inset+1);
+				tinsert(res,ins..i.."},");
+			elseif tk=="number" then
+				tinsert(res,ins..i..tostring(v)..", -- ["..k.."]");
+			else
+				tinsert(res,ins..i.."["..k.."] = "..tostring(v))
+			end
+		end
+
+		if inset==0 then
+			tinsert(res,ins.."},");
+		end
+
+		return res;
+	end
+
+	local function ns_debugTable(ns, tbl)
+		local res = dumpTable(tbl);
+		for i=1, #res do
+			ns_debug(ns, res[i])
+		end
+	end
+
 	local function ns_debugPrint(ns,...)
 		if not ns.debugMode then return end
 		print(colorize(ns,"<debug>",...));
@@ -95,7 +137,7 @@ do
 	---@param short string AddOn short name
 	function lib.RegisterPrint(ns,addon,short)
 		ns.addon,ns.addon_short = addon,short;
-		ns.print,ns.debug,ns.debugPrint = ns_print,ns_debug,ns_debugPrint;
+		ns.print,ns.debug,ns.debugPrint,ns.debugTable = ns_print,ns_debug,ns_debugPrint,ns_debugTable;
 		ns.deprecated = lib.deprecated;
 	end
 end
@@ -734,7 +776,11 @@ end
 
 --== MapPin or TomTom ==--
 do
-	function lib.AddWaypoint(mapId, x,y, label, useTomTom, addon)
+	function lib.AddWaypoint(mapId, x,y, ...)
+		local label, addon, useTomTom, mapPinToChat, z = ...
+		if type(label)=="number" then
+			z, label, useTomTom, addon = ...; -- special for map pin from blizzard. it can work with z as third location param
+		end
 		local TomTom = _G["TomTom"];
 		if TomTom and TomTom.AddWaypoint and useTomTom then
 			TomTom:AddWaypoint(mapId,x/100,y/100,{
@@ -744,9 +790,11 @@ do
 				minimap = true,
 				world = true
 			});
-			-- Thanks @ fuba82@github for reminding me. i've forgot to add this function content. :-)
-		else -- as option and fallback
+		elseif mapPinToChat then
 			_G["DEFAULT_CHAT_FRAME"]:AddMessage("\124cffffff00\124Hworldmap:"..mapId..":"..(x*100)..":"..(y*100).."\124h[\124A:Waypoint-MapPin-ChatIcon:13:13:0:0\124a "..label.."-Kartenmarkierung]\124h\124r");
+		else
+			local uiMapPoint = UiMapPoint.CreateFromCoordinates(mapId, x, y, z);
+			C_Map.SetUserWaypoint(uiMapPoint);
 		end
 	end
 end
