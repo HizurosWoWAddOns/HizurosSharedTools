@@ -790,11 +790,15 @@ do
 				minimap = true,
 				world = true
 			});
-		elseif mapPinToChat then
-			_G["DEFAULT_CHAT_FRAME"]:AddMessage("\124cffffff00\124Hworldmap:"..mapId..":"..(x*100)..":"..(y*100).."\124h[\124A:Waypoint-MapPin-ChatIcon:13:13:0:0\124a "..label.."-Kartenmarkierung]\124h\124r");
+		elseif C_Map.CanSetUserWaypointOnMap(mapId) then
+			if not mapPinToChat then
+				local uiMapPoint = UiMapPoint.CreateFromCoordinates(mapId, x/100, y/100, z);
+				C_Map.SetUserWaypoint(uiMapPoint);
+			else
+				_G["DEFAULT_CHAT_FRAME"]:AddMessage("\124cffffff00\124Hworldmap:"..mapId..":"..(x*100)..":"..(y*100).."\124h[\124A:Waypoint-MapPin-ChatIcon:13:13:0:0\124a "..label.."-Kartenmarkierung]\124h\124r");
+			end
 		else
-			local uiMapPoint = UiMapPoint.CreateFromCoordinates(mapId, x, y, z);
-			C_Map.SetUserWaypoint(uiMapPoint);
+			print(addon..": Cannot set waypoints on this map.")
 		end
 	end
 end
