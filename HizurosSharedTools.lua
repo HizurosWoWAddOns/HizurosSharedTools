@@ -115,6 +115,10 @@ do
 	end
 
 	local function ns_debugTable(ns, tbl)
+		if type(tbl)~="table" then
+			ns_debug(ns,tbl)
+			return;
+		end
 		local res = dumpTable(tbl);
 		for i=1, #res do
 			ns_debug(ns, res[i])
@@ -541,7 +545,7 @@ do
 				if C_SpellBook and C_SpellBook.IsSpellInSpellBook then
 					return C_SpellBook.IsSpellInSpellBook(spellID, spellBank, includeOverrides)
 				end
-				return IsSpellKnown(id);
+				return IsSpellKnown(spellID);
 			end
 		},
 
