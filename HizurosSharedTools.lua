@@ -5,7 +5,6 @@ local lib = LibStub:NewLibrary(MAJOR, MINOR);
 if not lib then return end
 
 local _G,tostringall,tonumber,rawset,type = _G,tostringall,tonumber,rawset,type
-local ConsolePrint = ConsolePrint;
 
 local LC = LibStub("LibColors-1.0");
 local C = LC.color;
@@ -534,6 +533,15 @@ do
 				-- friendID, friendRep, friendMaxRep, friendName, friendText, friendTexture, friendTextLevel, friendThreshold, nextFriendThreshold
 				info.friendshipFactionID, info.standing, info.maxRep, info.name, info.text, info.texture, info.reaction, info.reactionThreshold, info.nextThreshold = GetFriendshipReputation(friendshipFactionID);
 				return info;
+			end
+		},
+
+		C_SpellBook = {
+			IsSpellInSpellBook = function(spellID, spellBank, includeOverrides) -- Enum.SpellBookSpellBank.Player, false
+				if C_SpellBook and C_SpellBook.IsSpellInSpellBook then
+					return C_SpellBook.IsSpellInSpellBook(spellID, spellBank, includeOverrides)
+				end
+				return IsSpellKnown(id);
 			end
 		},
 
