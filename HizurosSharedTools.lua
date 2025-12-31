@@ -528,27 +528,6 @@ do
 			end,
 		},
 
-		C_GossipInfo = {
-			GetFriendshipReputation = function(friendshipFactionID)
-				if C_GossipInfo and C_GossipInfo.GetFriendshipReputation then
-					return C_GossipInfo.GetFriendshipReputation(friendshipFactionID);
-				end
-				local info = {reverseColor=false,overrideColor=0};
-				-- friendID, friendRep, friendMaxRep, friendName, friendText, friendTexture, friendTextLevel, friendThreshold, nextFriendThreshold
-				info.friendshipFactionID, info.standing, info.maxRep, info.name, info.text, info.texture, info.reaction, info.reactionThreshold, info.nextThreshold = GetFriendshipReputation(friendshipFactionID);
-				return info;
-			end
-		},
-
-		C_SpellBook = {
-			IsSpellInSpellBook = function(spellID, spellBank, includeOverrides) -- Enum.SpellBookSpellBank.Player, false
-				if C_SpellBook and C_SpellBook.IsSpellInSpellBook then
-					return C_SpellBook.IsSpellInSpellBook(spellID, spellBank, includeOverrides)
-				end
-				return IsSpellKnown(spellID);
-			end
-		},
-
 		C_Reputation = {
 			_GetFactionData = function(i,fSuffix)
 				if C_Reputation and C_Reputation.GetFactionInfo then
@@ -610,31 +589,6 @@ do
 		},
 
 		C_Spell = {
-			GetSpellInfo = function(...)
-				if C_Spell and C_Spell.GetSpellInfo then
-					return C_Spell.GetSpellInfo(...)
-				elseif C_SpellBook and C_SpellBook.GetSpellInfo then
-					return C_SpellBook.GetSpellInfo(...)
-				elseif GetSpellInfo then
-					-- old: name, rank, icon, castTime, minRange, maxRange, spellID, originalIcon
-					-- rank is missing
-					local info = {}
-					info.name, info.rank, info.iconID, info.castTime, info.minRange, info.maxRange, info.spellID, info.originalIcon = GetSpellInfo(...)
-					return info;
-				end
-			end,
-			GetSpellCooldown = function(...)
-				if C_Spell and C_Spell.GetSpellCooldown then
-					return C_Spell.GetSpellCooldown(...)
-				end
-				return GetSpellCooldown(...)
-			end,
-			GetSpellLink = function(...)
-				if C_Spell and C_Spell.GetSpellLink then
-					return C_Spell.GetSpellLink(...)
-				end
-				return GetSpellLink(...)
-			end,
 			GetSpellIcon = function(...)
 				if C_Container and C_Spell.GetSpellIcon then
 					return C_Spell.GetSpellIcon(...)
@@ -652,49 +606,13 @@ do
 				end
 				return GetItemStats(...)
 			end,
-			GetItemSpell = function(...)
-				if C_Item and C_Item.GetItemSpell then
-					return C_Item.GetItemSpell(...)
-				end
-				return GetItemSpell(...)
-			end,
-			GetItemInfoInstant = function(...)
-				if C_Item and C_Item.GetItemInfoInstant then
-					return C_Item.GetItemInfoInstant(...)
-				end
-				return GetItemInfoInstant(...)
-			end,
 			GetItemCooldown = function(...)
 				if C_Item and C_Item.GetItemCooldown then
 					return C_Item.GetItemCooldown(...)
 				end
 				return GetItemCooldown(...)
 			end,
-			GetItemIconByID = function(...)
-				if C_Item and C_Item.GetItemIconByID then
-					return C_Item.GetItemIconByID(...)
-				end
-				return GetItemIcon(...);
-			end,
-			GetItemIcon = function(...)
-				lib.debug("Warning","GetItemIcon must be replaced by GetItemIconByID",debugstack())
-				return lib.deprecated.C_Spell.GetItemIconByID(...)
-			end
-		},
 
-		C_Container = {
-			ContainerIDToInventoryID = function(...)
-				if C_Container and C_Container.ContainerIDToInventoryID then
-					return C_Container.ContainerIDToInventoryID(...)
-				end
-				return ContainerIDToInventoryID(...)
-			end,
-			GetContainerItemDurability = function(...)
-				if C_Container and C_Container.GetContainerItemDurability then
-					return C_Container.GetContainerItemDurability(...)
-				end
-				return GetContainerItemDurability(...)
-			end
 		},
 
 		global = {
@@ -706,25 +624,6 @@ do
 			end,
 		},
 
-		C_TransmogSets = {
-			GetFullBaseSetsCounts = function(...)
-				if C_TransmogSets.GetFullBaseSetsCounts then
-					return C_TransmogSets.GetFullBaseSetsCounts(...)
-				end
-				return C_TransmogSets.GetBaseSetsCounts(...)
-			end,
-		},
-
-		C_Minimap = {
-			SetTracking = function(...)
-				if C_Minimap and C_Minimap.SetTracking then
-					return C_Minimap.SetTracking(...)
-				end
-				SetTracking(...)
-			end
-
-		},
-
 		C_AddOns = {
 			GetAddOnMemoryUsage = function(...)
 				if C_AddOns and C_AddOns.GetAddOnMemoryUsage then
@@ -733,15 +632,6 @@ do
 				return GetAddOnMemoryUsage(...)
 			end
 		},
-
-		C_CurrencyInfo = {
-			GetCoinTextureString = function(...)
-				if C_CurrencyInfo and C_CurrencyInfo.GetCoinTextureString then
-					return C_CurrencyInfo.GetCoinTextureString(...)
-				end
-				return GetCoinTextureString(...)
-			end
-		}
 	}
 
 	local dummyF = function() end
