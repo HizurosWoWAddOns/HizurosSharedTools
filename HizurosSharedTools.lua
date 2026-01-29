@@ -149,6 +149,31 @@ end
 local ns = {debugMode=true};
 lib.RegisterPrint(ns,MAJOR,"HzST");
 
+--@do-not-package@
+if not HizurosSharedTools then
+	HizurosSharedTools = ns
+end
+if not HST then
+	HST = ns
+end
+--@end-do-not-package@
+
+
+-- misc functions
+function lib.C_Table_Search(find)
+	local n,c="C_Table_Search",0;
+	lib.debug(n,"results for",find)
+	for gname, gvalue in pairs(_G)do
+		if tostring(gname):match("^C_") and type(gvalue)=="table" then
+			for fname in pairs(_G[gname]) do
+				if fname:match(find) then
+					c=c+1;
+					lib.debug(n,c,gname,fname)
+				end
+			end
+		end
+	end
+end
 
 --== shared credits page ==--
 do -- 013088, 0070E0
@@ -457,21 +482,6 @@ do
 	end
 end
 
-function lib.C_Table_Search(find)
-	local n,c="C_Table_Search",0;
-	lib.debug(n,"results for",find)
-	for gname, gvalue in pairs(_G)do
-		if tostring(gname):match("^C_") and type(gvalue)=="table" then
-			for fname in pairs(_G[gname]) do
-				if fname:match(find) then
-					c=c+1;
-					lib.debug(n,c,gname,fname)
-				end
-			end
-		end
-	end
-end
-
 --== Compatibility between clients ==--
 do
 	lib.deprecated = {
@@ -674,6 +684,23 @@ do
 				end
 			end
 		end
+	end
+end
+
+--== Blizzards new "Secure Value" System is big bullshit      ==--
+--== Restricts access on more than only combat relevant data. ==--
+do
+	local function chkIsSecretValueBlocked(value)
+		-- try to trigger error to catch it up.
+		return tostring(value);
+	end
+
+	function lib.checkIsSecretValue_BULLSHIT(value)
+		if C_Secrets and C_Secrets.HasSecretRestrictions and C_Secrets.HasSecretRestrictions(value) then -- can be secret
+			-- C_Secrets.HasSecretRestrictions is only can be make problems. It makes problems mostly while and after combats.
+			return not pcall(chkIsSecretValueBlocked,value); -- check if it really
+		end
+		return false;
 	end
 end
 
