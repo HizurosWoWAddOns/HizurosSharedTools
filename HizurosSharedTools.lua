@@ -692,7 +692,9 @@ end
 do
 	local function chkIsSecretValueBlocked(value)
 		-- try to trigger error to catch it up.
-		return tostring(value);
+		if value and ((tonumber(value) and value>0) or value=="?") then
+			return tostring(value);
+		end
 	end
 
 	function lib.checkIsSecretValue_BULLSHIT(value)
