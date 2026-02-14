@@ -691,40 +691,45 @@ end
 --== Blizzards new "Secure Value" System is big bullshit      ==--
 --== Restricts access on more than only combat relevant data. ==--
 do
-	local function chkUnitIsPlayer(unit)
-		return type(unit)=="string" and unit~="" and UnitIsPlayer(unit);
-	end
 
-	local function chkIsSecretValueBlocked(value)
-		-- try to trigger error to catch it up.
-		if value and ((tonumber(value) and value>0) or value=="?") then
-			return tostring(value);
-		end
-	end
+	local functions = {
 
-	lib.BullShitDetector = {
-		-- ns.HST.BullShitDetector.UnitIsPlayer
-		UnitIsPlayer = function(unit)
-			local success, isPlayer = pcall(chkUnitIsPlayer, unit)
-			return success and isPlayer;
+		-- HST.BullShitDetector("UnitIsPlayer",unit)
+		UnitIsPlayer = function(token, unit)
+			return type(unit)=="string" and unit~="" and UnitIsPlayer(unit);
 		end,
-		-- ns.HST.BullShitDetector.ChatMsgSystem
+
+		-- HST.BullShitDetector("ChatMsgSystem",msg)
 		ChatMsgSystem = function(msg)
 			return msg and gsub(msg,"^.+$","");
 		end,
-		-- ns.HST.BullShitDetector.CalendarGetDayEvent
+
+		-- HST.BullShitDetector("CalendarGetDayEvent",event)
 		CalendarGetDayEvent = function(event)
+			-- secret table? WHY??? what impact has it on raid combats???
 			return event and event.title;
 		end,
-		-- ns.HST.BullShitDetector.generalTesting
+
+		-- HST.BullShitDetector("generalTesting",value)
 		generalTesting = function(value)
 			if C_Secrets and C_Secrets.HasSecretRestrictions and C_Secrets.HasSecretRestrictions(value) then -- can be secret
 				-- C_Secrets.HasSecretRestrictions is only can be make problems. It makes problems mostly while and after combats.
-				return not pcall(chkIsSecretValueBlocked,value); -- check if it really
+				if value and ((tonumber(value) and value>0) or value=="?") then
+					return tostring(value);
+				end
 			end
 			return false;
 		end
+
 	}
+
+	function lib.BullShitDetector(funcName,...)
+		local result = {pcall(functions[funcName],...)};
+		if table.remove(result,1) then
+			return unpack(result)
+		end
+		return false;
+	end
 end
 
 --== MapPin or TomTom ==--
