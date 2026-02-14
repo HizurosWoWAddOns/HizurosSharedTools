@@ -690,6 +690,10 @@ end
 --== Blizzards new "Secure Value" System is big bullshit      ==--
 --== Restricts access on more than only combat relevant data. ==--
 do
+	local function chkUnitIsPlayer(unit)
+		return type(unit)=="string" and unit~="" and UnitIsPlayer(unit);
+	end
+
 	local function chkIsSecretValueBlocked(value)
 		-- try to trigger error to catch it up.
 		if value and ((tonumber(value) and value>0) or value=="?") then
@@ -697,13 +701,29 @@ do
 		end
 	end
 
-	function lib.checkIsSecretValue_BULLSHIT(value)
-		if C_Secrets and C_Secrets.HasSecretRestrictions and C_Secrets.HasSecretRestrictions(value) then -- can be secret
-			-- C_Secrets.HasSecretRestrictions is only can be make problems. It makes problems mostly while and after combats.
-			return not pcall(chkIsSecretValueBlocked,value); -- check if it really
+	lib.BullShitDetector = {
+		-- ns.HST.BullShitDetector.UnitIsPlayer
+		UnitIsPlayer = function(unit)
+			local success, isPlayer = pcall(chkUnitIsPlayer, unit)
+			return success and isPlayer;
+		end,
+		-- ns.HST.BullShitDetector.ChatMsgSystem
+		ChatMsgSystem = function(msg)
+			return msg and gsub(msg,"^.+$","");
+		end,
+		-- ns.HST.BullShitDetector.CalendarGetDayEvent
+		CalendarGetDayEvent = function(event)
+			return event and event.title;
+		end,
+		-- ns.HST.BullShitDetector.generalTesting
+		generalTesting = function(value)
+			if C_Secrets and C_Secrets.HasSecretRestrictions and C_Secrets.HasSecretRestrictions(value) then -- can be secret
+				-- C_Secrets.HasSecretRestrictions is only can be make problems. It makes problems mostly while and after combats.
+				return not pcall(chkIsSecretValueBlocked,value); -- check if it really
+			end
+			return false;
 		end
-		return false;
-	end
+	}
 end
 
 --== MapPin or TomTom ==--
