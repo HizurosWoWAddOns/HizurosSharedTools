@@ -210,6 +210,7 @@ do -- 013088, 0070E0
 		-- donations
 		{"paypal","Nanci"}, false, {"PP",true}, false, false,
 		{"paypal","Michael"}, false, {"PP",true}, false, false,
+		{"paypal","Chris"}, false, {"PP",true}, false,false,
 
 		-- localizations
 		{"curseforge","Nelfym"},		{"frFR",1},false,false,false,
