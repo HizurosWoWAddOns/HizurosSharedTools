@@ -206,6 +206,7 @@ do -- 013088, 0070E0
 		{"github","tucomel (Github)"},false,false,false,{github_pr_s,6},
  		{"github","QartemisT (Github)"},false,false,false,{github_pr_s,13},
 		{"github","lkshrk (Github)"},false,false,false,{github_pr_p:format(2),16},
+		{"github","malfurion (Github)"},false,false,false,{github_pr_p:format(2),1},
 
 		-- donations
 		{"paypal","Nanci"}, false, {"PP",true}, false, false,
