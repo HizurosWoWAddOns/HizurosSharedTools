@@ -695,8 +695,9 @@ do
 	local functions = {
 
 		-- HST.BullShitDetector("UnitIsPlayer",unit)
-		UnitIsPlayer = function(token, unit)
-			return type(unit)=="string" and unit~="" and UnitIsPlayer(unit);
+		UnitIsPlayer = function(unit) -- not direct the function UnitIsPlayer but i've used the unit value from another function.
+			unit = tostring(unit);
+			return gsub(unit,"??","") and UnitIsPlayer(unit);
 		end,
 
 		-- HST.BullShitDetector("ChatMsgSystem",msg)
@@ -712,15 +713,16 @@ do
 
 		-- HST.BullShitDetector("generalTesting",value)
 		generalTesting = function(value)
-			if C_Secrets and C_Secrets.HasSecretRestrictions and C_Secrets.HasSecretRestrictions(value) then -- can be secret
+			--if C_Secrets and C_Secrets.HasSecretRestrictions and C_Secrets.HasSecretRestrictions(value) then -- can be secret
 				-- C_Secrets.HasSecretRestrictions is only can be make problems. It makes problems mostly while and after combats.
-				if value and ((tonumber(value) and value>0) or value=="?") then
-					return tostring(value);
+				local tValue = type(value);
+				-- try to trigger the evil
+				if value and ((tValue=="number" and value+1>0) or (gsub(tostring(value),"#",""))) then
+					return value;
 				end
-			end
+			--end
 			return false;
-		end
-
+		end,
 	}
 
 	function lib.BullShitDetector(funcName,...)
