@@ -731,8 +731,13 @@ do
 	}
 
 	function lib.BullShitDetector(funcName,...)
-		local result = {pcall(functions[funcName],...)};
-		if table.remove(result,1) then
+		local result
+		if functions[funcName] then
+			result = {pcall(functions[funcName],...)};
+		elseif _G[funcName] then
+			result = {pcall(_G[funcName],...)}
+		end
+		if result and table.remove(result,1) then
 			return unpack(result)
 		end
 		return false;
