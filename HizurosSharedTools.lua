@@ -730,14 +730,21 @@ do
 		end,
 	}
 
+	local issecretvalue,canaccessvalue = issecretvalue or function() return false end,canaccessvalue or function() return true end
 	function lib.BullShitDetector(funcName,...)
 		local result
+		if issecretvalue(...) or canaccessvalue(...)==false then
+			return false;
+		end
 		if functions[funcName] then
 			result = {pcall(functions[funcName],...)};
 		elseif _G[funcName] then
 			result = {pcall(_G[funcName],...)}
 		end
 		if result and table.remove(result,1) then
+			if issecretvalue(result[1]) or canaccessvalue(result[1])==false then
+				return false;
+			end
 			return unpack(result)
 		end
 		return false;
