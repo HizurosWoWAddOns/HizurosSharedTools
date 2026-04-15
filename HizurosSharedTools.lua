@@ -5,6 +5,7 @@ local lib = LibStub:NewLibrary(MAJOR, MINOR);
 if not lib then return end
 
 local _G,tostringall,tonumber,rawset,type = _G,tostringall,tonumber,rawset,type
+local issecretvalue,canaccessvalue = issecretvalue or function() return false end,canaccessvalue or function() return true end
 
 local LC = LibStub("LibColors-1.0");
 local C = LC.color;
@@ -64,6 +65,9 @@ do
 			c=2;
 		end
 		for i=c, #t do
+			if issecretvalue(t[i]) and not canaccessvalue(t[i]) then
+				t[i] = "[secret value]";
+			end
 			if not t[i]:find("\124c") then
 				t[i],c = "|cff"..colors[c]..t[i].."|r", c<#colors and c+1 or 1;
 			end
@@ -730,7 +734,6 @@ do
 		end,
 	}
 
-	local issecretvalue,canaccessvalue = issecretvalue or function() return false end,canaccessvalue or function() return true end
 	function lib.BullShitDetector(funcName,...)
 		local result
 		if issecretvalue(...) or canaccessvalue(...)==false then
