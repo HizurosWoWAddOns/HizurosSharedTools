@@ -708,7 +708,7 @@ do
 	end
 end
 
---== Blizzards new "Secure Value" System is big bullshit      ==--
+--== Blizzards new "Secure Value" System is big bullshit!!!!! ==--
 --== Restricts access on more than only combat relevant data. ==--
 do
 
@@ -753,6 +753,9 @@ do
 		local result
 		if issecretvalue(...) or canaccessvalue(...)==false then
 			return false;
+		end
+		if type(funcName)~="string" then
+			funcName = "generalTesting"
 		end
 		if functions[funcName] then
 			result = {pcall(functions[funcName],...)};
