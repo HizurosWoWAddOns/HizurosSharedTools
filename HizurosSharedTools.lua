@@ -27,14 +27,21 @@ L["ThxSpecial"] = "Special thanks at..."
 L["ThxLocale"] = "Thanks for the translations..."
 L["ThxSupport"] = "Thanks for the support..."
 L["ThxDonation"] = "Thanks for the donation..."
+L["githubPR"] = "For pull request(s) on github"
+L["DonationPP"] = "|cff375388Pay|cff5a9de0Pal|r"
+L["DonationGH"] = "Github"
+L["DonationPA"] = "Patreon"
 
 if LOCALE_deDE then
 	L["ThxSpecial"] = "Speziellen Dank an..."
 	L["ThxLocale"] = "Danke für die Übersetzungen..."
 	L["ThxSupport"] = "Danke für die Unterstützung..."
 	L["ThxDonation"] = "Danke für die Spende..."
-	L["Credit"] = "Anerkennung"
 	L["Thanks at..."] = "Danke an..."
+end
+
+for _, code in ipairs({"DEDE","FRFR","ITIT","ESES","ESMX","PTPT","PTBR","KOKR","RURU","ZHCN","ZHTW"})do
+	L["Language"..code] = _G[code] or _G["LOCALE_DISPLAY_NAME_"..code] or _G["LFG_LIST_LANGUAGE_"..code]
 end
 
 --== colorized print ==--
@@ -179,10 +186,25 @@ function lib.C_Table_Search(find)
 	end
 end
 
+local function pairsByKeys(tbl)
+	local keys = {}
+	for k in pairs(tbl)do
+		tinsert(keys,k)
+	end
+	table.sort(keys)
+	local i=0
+	local iter = function()
+		i=i+1
+		if keys[i] == nil then
+			return nil
+		end
+		return keys[i], table.concat(tbl[keys[i]],", ")
+	end
+	return iter
+end
+
 --== shared credits page ==--
-do -- 013088, 0070E0
-	local donation_platforms = {PP="|cff375388Pay|cff5a9de0Pal|r",PA="Patreon",GH="Github"};
-	local AFK,AS,BSB,BE,CI,FH,FLI,GRN,GMIE,GAT,HT,HFP,LFR,QR,SC,TRI = 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16
+do
 	local myAddOns = {
 		"AFK_fullscreen","AuctionSellers","BestSellButton","Broker_Everything","CommunityInfo",
 		"FarmHud","FollowerLocationInfo","GarrisonRandomNPCs","GatherMate2_ImportExport","GuildApplicantTracker",
@@ -190,126 +212,61 @@ do -- 013088, 0070E0
 		-- don't sort by name. add new at the end
 	};
 
-	local github_pr_s = "For pull request on github."
-	local github_pr_p = "For pull requests on github."
 	local supporter = { -- {<color>,<name>}, <localizations>, <donations>, <otherSupportTypes>, <special text>,
 		-- special mentions
-		{"battlenet","liquidbase",false,"/", "deathknight","Merith", false,"(Author of DuffedUI)"},false,false,false,{"For idea and first code to add quest level to quest tracker :)",HT},
-		{"battlenet","pas06",false,"/", "curseforge","Bullseiify"},{"deDE",BE,FH,FLI,GAT,TRI},false,false,{"For idea to the keystroke replace function",HT},
-		{"github","TegraGG (Github)"},false,false,false,{github_pr_s,TRI},
-		{"github","bruteostrich (Github)"},false,false,false,{github_pr_s,FH},
-		{"github","fuba82 (Github)"}, false,false,false,{"For idea to use hooksecurefunc on mixin table.",LFR},
-		{"github","flaicher (Github)"},false,false,false,{github_pr_s,BE},
-		{"github","BelegCufea (Github)"},false,false,false,{github_pr_p,BE},
-		{"github","kanegasi (Github)"},false,false,false,{github_pr_s,BE},
-		{"github","Brixus3 (Github)"},false,false,false,{github_pr_p,BE},
-		{"github","4C51 (Github)"},false,false,false,{github_pr_s,BE},
-		{"github","agentschmitt (Github)"},false,false,false,{github_pr_s,BE},
-		{"github","lowlee (Github)"},false,false,false,{github_pr_s,BE},
-		{"github","Sockdolager (Github)"},false,false,false,{github_pr_s,FH},
-		{"github","MrStrugglez (Github)"},false,false,false,{github_pr_s,FH},
-		{"github","tucomel (Github)"},false,false,false,{github_pr_s,FH},
- 		{"github","QartemisT (Github)"},false,false,false,{github_pr_s,LFR},
-		{"github","lkshrk (Github)"},false,false,false,{github_pr_p,TRI},
-		{"github","malfurion (Github)"},false,false,false,{github_pr_p,AFK},
+		--{"battlenet","liquidbase",false,"/", "deathknight","Merith", false,"(Author of DuffedUI)"},false,false,false,{"For idea and first code to add quest level to quest tracker :)",HT},
+		--{"battlenet","pas06",false,"/", "curseforge","Bullseiify"},{"deDE",GAT},false,false,{"For idea to the keystroke replace function",HT},
 
 		-- donations
-		{"paypal","Nanci"}, false, {"PP",true}, false, false,
-		{"paypal","Michael"}, false, {"PP",true}, false, false,
 		{"paypal","Chris"}, false, {"PP",true}, false,false,
+		{"paypal","Michael"}, false, {"PP",true}, false, false,
+		{"paypal","Nanci"}, false, {"PP",true}, false, false,
 
-		-- localizations
-		{"curseforge","Nelfym"},		{"frFR",AFK},false,false,false,
-		{"curseforge","pczombie09"},	{"koKR",AFK},false,false,false,
-		{"curseforge","KARMA_Zz"},		{"ruRU",AFK},false,false,false,
-		{"curseforge","BNS333"},		{"zhTW",AFK},false,false,false,
-		{"curseforge","Crisll"},		{"esES",AFK},false,false,false,
-
-		{"curseforge","ZamestoTV"},		{"ruRU",AS,BSB,BE,CI,GMIE,LFR,SC},false,false,false,
-		{"curseforge","Der_Adrinator"}, {"deDE",BE},false,false,false,
-		{"curseforge","Nierhain"},		{"deDE",BE},false,false,false,
-		{"curseforge","Araldwenn"},		{"frFR",BE},false,false,false,
-		{"curseforge","Braincell1980"},	{"frFR",BE,LFR},false,false,false,
-		{"curseforge","netaras"},		{"koKR",BE,FH},false,false,false,
-		{"curseforge","적셔줄게"},		{"koKR",BE},false,false,false,
-		{"curseforge","cikichen"},		{"zhCN",BE,"zhTW",BE},false,false,false,
-		{"curseforge","sanxy00"},		{"zhCN",BE},false,false,false,
-		{"curseforge","雪夜霜刀"},		{"zhCN",BE},false,false,false,
-		{"curseforge","半熟魷魚"},		{"zhTW",BE},false,false,false,
-		{"curseforge","spridar"},		{"zhTW",BE},false,false,false,
-
-		{"curseforge","Lightuky"},		{"frFR",CI},false,false,false,
-		{"curseforge","TomasRipley"},	{"ruRU",CI},false,false,false,
-
-		{"curseforge","Dathwada"},		{"deDE",FH},false,false,false,
-		{"curseforge","supahmexman"},	{"esES",FH},false,false,false,
-		{"curseforge","justregular16"},	{"esMX",FH},false,false,false,
-		{"curseforge","Zickwik"},		{"frFR",FH},false,false,false,
-		{"curseforge","oxscott"},		{"itIT",FH},false,false,false,
-		{"curseforge","g0ldenev1l"},	{"zhCN",FH},false,false,false,
-		{"curseforge","gjfleo"},		{"zhCN",FH},false,false,false,
-		{"curseforge","kuaishan"},		{"zhCN",BE,FH},false,false,false,
-		{"curseforge","mccma"},			{"zhTW",FH},false,false,false,
-
-		{"curseforge","Tumbleweed_DSA"},{"deDE",FLI},false,false,false,
-		{"curseforge","Felli64"},		{"deDE",FLI},false,false,false,
-		{"curseforge","Dabeuliou"},		{"frFR",FLI},false,false,false,
-		{"curseforge","unrealcrom96"},	{"koKR",FLI},false,false,false,
-		{"curseforge","Canettieri"},	{"ptBR",FLI},false,false,false,
-		{"curseforge","dropdb"},		{"ruRU",FLI},false,false,false,
-		{"curseforge","Igara86"},		{"ruRU",FLI},false,false,false,
-		{"curseforge","Ananhaid"},		{"zhCN",FLI},false,false,false,
-
-		{"curseforge","Hollicsh"},		{"ruRU",TRI},false,false,false,
-
-		{"curseforge","polochonappleseed"},{"frFR",LFR},false,false,false,
-		{"curseforge","Grifo92"},		{"itIT",CI,LFR},false,false,false,
-		{"curseforge","Canettieri"},	{"ptBR",FLI},false,false,false,
-		{"curseforge","Zurent"},		{"esES",FH},false,false,false,
-		{"curseforge","justregular16"},	{"esMX",FH},false,false,false,
-		{"curseforge","netaras"},		{"koKR",FH},false,false,false,
-		{"curseforge","g0ldenev1l"},	{"zhCN",FH},false,false,false,
-		{"curseforge","gjfleo"},		{"zhCN",FH},false,false,false,
-		{"curseforge","LvWind"},		{"zhCN",FH},false,false,false,
-		{"curseforge","Subly"},			{"frFR",BE},false,false,false,
-		{"curseforge","FunnyBunnyNikita"},{"ruRU",BE},false,false,false,
-		{"curseforge","雪夜霜刀"},		{"zhCN",BE},false,false,false,
-
+		--{"curseforge","ZamestoTV"},		{"ruRU",AS,GMIE},false,false,false,
 	}
 
-	--local foreignAddOns = {}
-
-	local creditTemplate = {type="group",order=200,name=L["Credit"],args={
-		thanks={type="description",order=0,fontSize="large",name=C("dkyellow",L["Thanks at..."])},
-		thanksLine={type="header",order=1,name=""}
-	}};
-
-	local supporterTemplate = {
-		type="group",inline=true,width="normal",order=0,name="",
+	local creditTemplate = {
+		type="group", order=-1,
+		name=L["Credits"],
 		args={
-			label={type="description",order=1,fontSize="large"},
-			reasons={type="description",order=2,fontSize="medium"}
+			thanks={
+				type="description", order=0, fontSize="large",
+				name=C("dkyellow",L["Thanks at..."])
+			},
+			thanksLine={
+				type="header", order=1,
+				name=""
+			},
+			special={
+				type="group", order=3, inline=true, name="", hidden=true,
+				args={
+					header = { type="header", order=1, name=L["ThxSpecial"] },
+					names = { type="group", order=2, name="", args={} }
+				},
+			},
+			support={
+				type="group", order=3, inline=true, name="", hidden=true,
+				args={
+					header = { type="header", order=1, name=L["ThxSupport"] },
+					names = { type="group", order=2, name="", args={} }
+				},
+			},
+			donate={
+				type="group", order=3, inline=true, name="", hidden=true,
+				args={
+					header = { type="header", order=1, name=L["ThxDonation"] },
+					names = { type="group", order=2, name="", args={} }
+				},
+			},
+			locale={
+				type="group", order=3, inline=true,name="", hidden=true,
+				args={
+					header = { type="header", order=1, name=L["ThxLocale"] },
+					names = { type="group", order=2, name="", args={} }
+				},
+			}
 		}
 	};
-	local descLargeTemplate = {type="description",order=0,fontSize="large"}
-	local headerTemplate = {type="header",order=0,name=""};
-
-	local function thisAddOn(addon,tbl)
-		local res,obj = {};
-		for _,value in ipairs(tbl) do
-			if type(value)=="string" then
-				obj = value;
-			elseif value==true then
-				tinsert(res,obj);
-			elseif myAddOns[value]==addon then
-				tinsert(res,obj);
-			end
-		end
-		if #res>0 then
-			return res;
-		end
-		return false;
-	end
 
 	local function Supporter_GetName(entry)
 		local name = {};
@@ -328,168 +285,154 @@ do -- 013088, 0070E0
 		return table.concat(name," ");
 	end
 
-	local function Supporter_GetLanguages(entries)
-		local unique,res = {},{}
-		for i,v in ipairs(entries) do
-			local value = v:upper();
-			if value=="PTPT" and not LFG_LIST_LANGUAGE_PTPT then
+	local function forThisAddon(lst, addonStr)
+		if lst[2]==true then
+			return true
+		end
+		for i=2, #lst do
+			if myAddOns[lst[i]]==addonStr then
+				return true
+			end
+		end
+	end
+
+	local function AddSupporter(tbl,supps,addon)
+		local libTbl=false
+		if supps==true then
+			supps,libTbl = supporter,true
+		end
+		local isNotEmpty = false
+		local sectionKeys = {"locale","donate","support","special"}
+		for s=1, #supps, 5 do
+			local name = Supporter_GetName(supps[s])
+			for i=1, 4 do
+				local section = sectionKeys[i]
+				local data = supps[s+i]
+				if data and not (libTbl and not forThisAddon(data,addon)) then
+					if not tbl[section] then
+						tbl[section] = {}
+					end
+					if not tbl[section][data[1]] then
+						tbl[section][data[1]] = {}
+					end
+					tinsert(tbl[section][data[1]],name)
+					isNotEmpty=true
+				end
+			end
+		end
+		return isNotEmpty
+	end
+
+	local sectionName = {
+		locale=function(code)
+			code = code:upper()
+			if code=="PTPT" then
 				-- blizzard using on eu clients LFG_LIST_LANGUAGE_PTBR instead of LFG_LIST_LANGUAGE_PTPT
-				value = LFG_LIST_LANGUAGE_PTBR;
-			elseif _G["LFG_LIST_LANGUAGE_"..value] then
-				value = _G["LFG_LIST_LANGUAGE_"..value];
+				code = "PTBR"
 			end
-			if not unique[value] then
-				tinsert(res,value);
-				unique[value] = true;
-			end
+			return L["Language"..code]
+		end,
+		donate=function(key) return L["Donation"..key] end,
+		default=function(key) return rawget(L,key) or key end
+	}
+
+	-- Add custom credit
+	---@param addon string
+	---@param opts? table
+	function lib.CreditsToHTML(addon,opts)
+		local htmlStr = ""
+		local sectionHeader = {special="ThxSpecial",locale="ThxLocale",support="ThxSupport",donate="ThxDonation"}
+		opts = opts or {}
+		if not opts.sectionHeader then
+			opts.sectionHeader = "<h2>%s<h2>"
 		end
-		return table.concat(res,", ");
-	end
-
-	local function Supporter_GetDonationPlatforms(entries)
-		for i,v in ipairs(entries) do
-			entries[i] = donation_platforms[v] or v;
-		end
-		return table.concat(entries,", ");
-	end
-
-	local function Supporter_GetSupport(entries)
-		for i,v in ipairs(entries)do
-			entries[i] = v;
-		end
-		return table.concat(entries,", ");
-	end
-
-	local function Supporter_AddStyle(addon,credit)
-		local specials,donations,translations,special,donation,translation = {},{},{},3,2,1;
-
-		if credit.args.thanks then
-			credit.args.thanks.hidden=true
-			credit.args.thanksLine.hidden=true
+		if not opts.sectionName then
+			opts.sectionName = "<h3>%s</h3>"
 		end
 
-		local prev = nil;
-
-		local sIndex,hasNoEntries = {1,1,1,1},true;
-		local labels = {"ThxLocale","ThxDonation","ThxSupport"}
-		for s=1, #supporter, 5 do
-			local name = Supporter_GetName(supporter[s]);
-			for r=4,1,-1 do
-				local rInvert = 4-r;
-				local rIndex,objs = s+r;
-				if supporter[rIndex] then
-					objs = thisAddOn(addon,supporter[rIndex]);
+		-- add supporter
+		local sections = {}
+		local isNotEmpty = false;
+		if AddSupporter(sections, true, addon) then
+			isNotEmpty = true
+		end
+		if (opts and opts.supporter and AddSupporter(sections, opts.supporter, addon)) then
+			isNotEmpty = true
+		end
+		if isNotEmpty then
+			for sectionKey,section in pairs(sections)do
+				htmlStr = htmlStr .. opts.sectionHeader:format(L[sectionHeader[sectionKey]])
+				local nameFunction = sectionName[sectionKey] or sectionName.default
+				for key,names in pairsByKeys(section) do
+					htmlStr = htmlStr..opts.sectionName:format(nameFunction(key)).."<p>"..names.."</p>"
 				end
-				if objs then
-					local res = {name};
-					local width,size = "normal",nil;
-					if r==1 then -- translations
-						tinsert(res,Supporter_GetLanguages(objs));
-					elseif r==2 then -- donations
-						tinsert(res,Supporter_GetDonationPlatforms(objs));
-					elseif r==3 then -- other support types
-						tinsert(res,Supporter_GetSupport(objs));
-					else -- specials
-						tAppendAll(res,objs);
-						width="full";
-						size="medium";
-					end
-					local entry = CopyTable(descLargeTemplate);
-					entry.order = rInvert*1000+sIndex[r];
-					entry.name = table.concat(res,"|n");
-					entry.width = width;
-					if size then
-						entry.fontSize = size;
-					end
-					credit.args["supporter-"..s.."-"..r] = entry;
-					sIndex[r] = sIndex[r] + 1;
-				end
-				if objs and not credit.args["header-"..r] then
-					credit.args["header-"..r] = CopyTable(descLargeTemplate);
-					credit.args["header-"..r].order = rInvert*1000;
-					credit.args["header-"..r].name = "|n"..C("cyan",L[labels[r] or "ThxSpecial"]);
-					hasNoEntries = false
-				end
+				htmlStr = htmlStr .. "<br />"
 			end
 		end
-		return hasNoEntries;
+		return htmlStr
 	end
 
 	-- Add custom credit
 	---@param addon string
-	---@param creditSection? table
-	---@param style? string
-	function lib.AddCredit(addon,creditSection,style)
+	---@param optionTable? table
+	---@param opts? table
+	function lib.AddCredit(addon,optionTable,opts)
 		local credit = CopyTable(creditTemplate);
-		credit.name = addon.." / "..L["Credit"]
-		--credit.args = {};
-		--[[
-		if tonumber(order) then
-			credit.order = order;
+
+		if type(opts)=="table" then
+			if opts.inline==true then
+				credit.inline = true
+			end
+			if tonumber(opts.order) then
+				credit.order = opts.order
+			end
 		end
-		--]]
 
 		-- add supporter
-		local isEmpty = Supporter_AddStyle(addon,credit);
-
-		if isEmpty then
-			return;
+		local sections = {}
+		local isNotEmpty = false;
+		if AddSupporter(sections, true, addon) then
+			isNotEmpty = true
+		end
+		if (opts and opts.supporter and AddSupporter(sections, opts.supporter, addon)) then
+			isNotEmpty = true
+		end
+		if isNotEmpty then
+			for sectionKey,section in pairs(sections)do
+				local nameFunction,order = sectionName[sectionKey] or sectionName.default,1
+				for key,names in pairsByKeys(section) do
+					credit.args[sectionKey].args.names.args["header"..key] = {type="description", order=order, name=nameFunction(key), fontSize="large" }
+					credit.args[sectionKey].args.names.args["names"..key] = {type="description", order=order+1, name=names, fontSize="medium"}
+					order=order+2
+				end
+				if order>1 then
+					credit.args[sectionKey].hidden=false
+				end
+			end
+			if credit.args.thanks then
+				credit.args.thanks.hidden=true
+				credit.args.thanksLine.hidden=true
+			end
 		end
 
-		-- register
-		if type(creditSection)=="table" then
-			Mixin(creditSection,credit.args);
+		-- add to option table
+		if type(optionTable)=="table" then
+			if optionTable.type=="group" then
+				optionTable.args=credit.args;
+			else
+				optionTable.credit = credit;
+			end
 		else
 			-- add own sub option table
-			LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable(addon.."/Credit", credit);
-			LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addon.."/Credit", "Credit", addon);
+			credit.name = addon.." / "..L["Credits"]
+			LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable(addon.."/Credits", credit);
+			LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addon.."/Credits", "Credits", addon);
 		end
 	end
 end
 
 --== Blizz option panel functions ==--
 do
-	local function CalculateOffset(panel)
-		local pType = type(panel);
-		local buttonCount = #InterfaceOptionsFrameAddOns.buttons;
-		--local buttonHeight = InterfaceOptionsFrameAddOns.buttons[1]:GetHeight();
-
-		local elementsBefore = 0;
-		for i, element in next, INTERFACEOPTIONS_ADDONCATEGORIES do
-			if not element.hidden then
-				if (pType=="string" and element.name==panel) or (pType=="table" and element==panel) then
-					break;
-				end
-				elementsBefore = elementsBefore + 1;
-			end
-		end
-
-		if elementsBefore>buttonCount then
-			ns:print(elementsBefore,buttonCount);
-			return elementsBefore + 1 - buttonCount;
-		end
-
-		return 0;
-	end
-
-	--[[local function BlizzOptions_ExpandOnShowHook(self)
-		local p = false;
-		for i, button in next, InterfaceOptionsFrameAddOns.buttons do
-			if button.element then
-				if button.element.name == self.name then
-					p = button
-				end
-			end
-		end
-		if p and p.element.collapsed then
-			OptionsListButtonToggle_OnClick(p.toggle)
-			local offset = CalculateOffset();
-			if offset>0 then
-				-- SetOffset(offset)
-			end
-		end
-	end]]
-
 	---@param opts table
 	function lib.BlizzOptions_ExpandOnShow(opts)
 		if opts.hasExpandOnShowHook then return end
