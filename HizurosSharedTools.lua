@@ -45,6 +45,7 @@ for _, code in ipairs({"DEDE","FRFR","ITIT","ESES","ESMX","PTPT","PTBR","KOKR","
 end
 
 --== colorized print ==--
+local dumpTable
 do
 	local defaultColors = {"20b0ff","00ff00","ff6060","44ffff","ffff00","ff8800","ff44ff","ffffff"};
 	-- If you want your own colors add a table named printColors in your addon namespace.
@@ -90,7 +91,6 @@ do
 		_ConsolePrint(date("|cff999999%X|r"),colorize(ns,"<debug>",...));
 	end
 
-	local dumpTable
 	local insStr = "  "
 	function dumpTable(t,res,inset)
 		local tmp,isAssoc,i,ins = {},false,"  ";
@@ -139,6 +139,17 @@ do
 	local function ns_debugPrint(ns,...)
 		if not ns.debugMode then return end
 		print(colorize(ns,"<debug>",...));
+	end
+
+	function lib.debugTable(tbl)
+		if type(tbl)~="table" then
+			lib.debug(tbl)
+			return;
+		end
+		local res = dumpTable(tbl);
+		for i=1, #res do
+			lib.debug(res[i])
+		end
 	end
 
 	function lib.debug(...)
@@ -448,204 +459,168 @@ end
 
 --== Compatibility between clients ==--
 do
+	local projectNames = { -- https://warcraft.wiki.gg/wiki/WOW_PROJECT_ID
+		[1] = "Retail",
+		[2] = "ClassicEra",
+		[3] = "PlunderStorm",
+		[5] = "BCClassic",
+		[11] = "WrathClassic",
+		[14] = "CataClassic",
+		[18] = "Forever",
+		[19] = "MistsClassic"
+	}
+	local currentName = "<"..(projectNames[WOW_PROJECT_ID] or ("Unknown projectID "..WOW_PROJECT_ID))..">"
+
+	local function FactionInfoToTable(...)
+		local info = {}
+		info.name,info.description,info.reaction,info.currentReactionThreshold,info.nextReactionThreshold,info.currentStanding,info.atWarWith,info.canToggleAtWar,info.isHeader,info.isCollapsed,info.hasRep,info.isWatched,info.isChild,info.factionID,info.hasBonusRepGain,info.canBeLFGBonus = ...
+		return info
+	end
+
 	lib.deprecated = {
 		C_QuestLog = {
 			GetInfo = function(questLogIndex)
-				if C_QuestLog and C_QuestLog.GetInfo then
-					return C_QuestLog.GetInfo(questLogIndex)
-				end
-				local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isStory, isHidden, isScaling  = GetQuestLogTitle(questLogIndex);
-				if type(suggestedGroup)=="string" then
-					suggestedGroup = tonumber(suggestedGroup) or 0; -- problem on bc classic client?
-				end
-				return {
-					frequency = frequency,
-					hasLocalPOI = hasLocalPOI,
-					isAutoComplete = isComplete,
-					isCollapsed = isCollapsed,
-					isHeader = isHeader,
-					isHidden = isHidden,
-					isOnMap = isOnMap,
-					isScaling = isScaling,
-					isStory = isStory,
-					isTask = isTask,
-					level = level,
-					questID = questID,
+				local info = {
 					questLogIndex = questLogIndex,
-					startEvent = startEvent,
-					suggestedGroup = suggestedGroup,
-					title = title,
-					-- dummies. not present in old function
+
+					-- dummy entries. not returned by GetQuestLogTitle()
 					campaignID = 0,
 					difficultyLevel = 0,
+					headerSortKey = false,
+					isAbandonOnDisable = false,
+					isAutoComplete = false,
 					isBounty = false,
-					isLegendarySort = false,
+					isInternalOnly = false,
 					overridesSortOrder = false,
+					questClassification = false, -- Enum.QuestClassification
 					readyForTranslation = false,
-					useMinimapHeader = false,
-				};
+					sortAsNormalQuest = false,
+					useMinimalHeader = false,
+				}
+				info.title, info.level, info.suggestedGroup, info.isHeader, info.isCollapsed, info.isComplete, info.frequency, info.questID, info.startEvent, info.displayQuestID, info.isOnMap, info.hasLocalPOI, info.isTask, info.isStory, info.isHidden, info.isScaling  = GetQuestLogTitle(questLogIndex);
+				return info
 			end,
+			-- Broker_Everything/modules/questlog.lua
+			-- Broker_Everything/modules/invasions.lua
+
 			GetQuestTagInfo = function(questID)
-				if C_QuestLog and C_QuestLog.GetQuestTagInfo then
-					return C_QuestLog.GetQuestTagInfo(questID)
-				end
-				-- 10/22/2023: Not present in Classic and Classic Era
-				local tagID, tagName, worldQuestType, rarity, isElite, tradeskillLineIndex, displayTimeLeft = GetQuestTagInfo(questID);
-				return {
-					tagID = tagID,
-					tagName = tagName,
-					worldQuestType = worldQuestType,
-					quality = rarity,
-					isElite = isElite,
-					tradeskillLineID = tradeskillLineIndex,
-					displayExpiration = displayTimeLeft
-				};
+				local info = {}
+				info.tagID, info.tagName, info.worldQuestType, info.quality, info.isElite, info.tradeskillLineID, info.displayTimeLeft = GetQuestTagInfo(questID);
+				return info
 			end,
+			-- Broker_Everything/modules/questlog.lua
+
+			GetNumQuestLogEntries = true,
+			-- Broker_Everything/modules/questlog.lua
 		},
 
 		C_Reputation = {
-			_GetFactionData = function(i,fSuffix)
-				if C_Reputation and C_Reputation.GetFactionInfo then
-					local info = C_Reputation.GetFactionInfo(i)
-					if type(info)=="table" then
-						return info;
-					end
-				end
-				local fName = "GetFactionInfo"..(fSuffix=="ID" and "ByID" or "");
-				if not _G[fName] then
-					return;
-				end
-				local info = {};
-				info.name,info.description,info.reaction,info.currentReactionThreshold,info.nextReactionThreshold,info.currentStanding,info.atWarWith,
-				info.canToggleAtWar,info.isHeader,info.isCollapsed,info.hasRep,info.isWatched,info.isChild,
-				info.factionID,info.hasBonusRepGain,info.canBeLFGBonus = _G["GetFactionInfo"..(fSuffix=="ID" and "ByID" or "")](i)
-				if not info.name then
-					return;
-				end
-				return info
-			end,
 			GetFactionDataByIndex = function(index) -- new in 11.0
-				if C_Reputation and C_Reputation.GetFactionDataByIndex then
-					return C_Reputation.GetFactionDataByIndex(index)
-				end
-				return lib.deprecated.C_Reputation._GetFactionData(index,"Index")
+				return FactionInfoToTable(GetFactionInfo(index))
 			end,
+			-- Broker_Everything/modules/reputation.lua
+
 			GetFactionDataByID = function(id) -- new in 11.0
-				if C_Reputation and C_Reputation.GetFactionDataByID then
-					return C_Reputation.GetFactionDataByID(id)
-				end
-				return lib.deprecated.C_Reputation._GetFactionData(id,"ID");
+				return FactionInfoToTable(GetFactionInfoByID(id))
 			end,
-			GetNumFactions = function() -- new in 11.0
-				if C_Reputation and C_Reputation.GetNumFactions then
-					return C_Reputation.GetNumFactions()
-				end
-				return GetNumFactions()
-			end,
-			GetWatchedFactionData = function(...) -- new in 11.0
-				if C_Reputation and C_Reputation.GetWatchedFactionData then
-					return C_Reputation.GetWatchedFactionData(...)
-				end
-				local _, _, _, _, _, factionID = GetWatchedFactionInfo()
-				return lib.deprecated.C_Reputation.GetFactionDataByID(factionID);
-			end,
-			ExpandFactionHeader = function(...) -- new in 11.0
-				if C_Reputation and C_Reputation.ExpandFactionHeader then
-					return C_Reputation.ExpandFactionHeader(...)
-				end
-				ExpandFactionHeader(...)
-			end,
-			CollapseFactionHeader = function(...) -- new in 11.0
-				if C_Reputation and C_Reputation.CollapseFactionHeader then
-					return C_Reputation.CollapseFactionHeader(...)
-				end
-				CollapseFactionHeader(...)
-			end
-		},
+			-- Broker_Everything/modules/emissaryquests.lua
+			-- Broker_Everything/modules/reputation.lua
+			-- Broker_Everything/modules/professions.lua
+			-- Broker_Everything/modules/speed.lua
+			-- FollowerLocationInfo/Journal.lua
 
-		C_Spell = {
-			GetSpellIcon = function(...)
-				if C_Container and C_Spell.GetSpellIcon then
-					return C_Spell.GetSpellIcon(...)
-				end
-				return GetSpellIcon(...)
-			end
+			GetNumFactions = true,
+			-- Broker_Everything/modules/reputation.lua
 
+			ExpandFactionHeader = true,
+			-- Broker_Everything/modules/reputation.lua
+
+			CollapseFactionHeader = true,
+			-- Broker_Everything/modules/reputation.lua
 		},
 
 		C_Item = {
-			GetItemStats = function(...)
-				if C_Container and C_Item.GetItemStats then
+			GetItemStats = true,
+			-- Broker_Everything/modules/equipment.lua
 
-					return C_Item.GetItemStats(...)
-				end
-				return GetItemStats(...)
-			end,
-			GetItemCooldown = function(...)
-				if C_Item and C_Item.GetItemCooldown then
-					return C_Item.GetItemCooldown(...)
-				end
-				return GetItemCooldown(...)
-			end,
-
-		},
-
-		global = {
-			UnitInVehicle = function() -- speed
-				if UnitInVehicle then
-					return UnitInVehicle()
-				end
-				return false;
-			end,
+			GetItemCooldown = {"C_Item","GetItemCooldown","C_Container","GetItemCooldown"},
+			-- Broker_Everything/modules/gps.lua
 		},
 
 		C_AddOns = {
-			GetAddOnMemoryUsage = function(...)
-				if C_AddOns and C_AddOns.GetAddOnMemoryUsage then
-					return C_AddOns.GetAddOnMemoryUsage(...)
-				end
-				return GetAddOnMemoryUsage(...)
-			end
+			GetAddOnMemoryUsage = true -- 12.1.5 currently not moved to C_AddOns table
+			-- Broker_Everything/modules/system.lua
+		},
+
+		C_SpellBook = {
+			GetSpellBookItemInfo = true
+			-- Broker_Everything/modules/professions.lua
+		},
+
+		C_SpecializationInfo = {
+			SetSpecialization = true,
+			-- Broker_Everything/modules/classspecs.lua
+		},
+
+		ChatFrameUtil = {
+			SendTell = "ChatFrame_SendTell",
+			-- Broker_Everything/modules/friends.lua
+			GetMobileEmbeddedTexture = "ChatFrame_GetMobileEmbeddedTexture",
+			-- Broker_Everything/modules/guild.lua
+		},
+
+		TimeUtil = {
+			GetRecentTimeDate = "RecentTimeDate",
+			-- Broker_Everything/modules/guildlog.lua
 		},
 	}
 
-	local dummyF = function() end
-	local dummyMT = {}
-	function dummyMT.__index(t,k)
-		lib.debug("deprecated-api missing table function",t.__parent,k,debugstack());
-		rawset(t,k,dummyF);
-		return dummyF;
+	local function updateFunc(cTableName,funcName,func)
+
+		-- is C_Table and function available?
+		if _G[cTableName] and type(_G[cTableName][funcName])=="function" then
+			lib.deprecated[cTableName][funcName] = _G[cTableName][funcName] -- new function
+			if WOW_PROJECT_ID~=WOW_PROJECT_MAINLINE then
+				lib.debug("<deprecated-api>",currentName,cTableName,funcName);
+			end
+			return
+		end
+
+		if type(func)=="function" then
+			lib.deprecated[cTableName][funcName] = func  -- old function
+			return
+		elseif type(func)=="table" then
+			-- is function in C_Table renamed?
+			local a1,a2, b1,b2 = unpack(func)
+			if type(_G[a1])=="table" and type(_G[a1][a2])=="function" then
+				lib.deprecated[cTableName][funcName] = _G[a1][a2]  -- old function
+				return
+			elseif b1 and b2 and type(_G[b1])=="table" and type(_G[b1][b2])=="function" then
+				lib.deprecated[cTableName][funcName] = _G[b1][b2]  -- old function
+				lib.debug("<deprecated-api>",currentName,cTableName,funcName,"<not found. Hope the other works>",b1, b2)
+				return
+			end
+		elseif type(func)=="string" and _G[func] then
+			lib.deprecated[cTableName][funcName] = _G[func]  -- old function
+			return
+		end
+
+		-- all failed try old function
+		if _G[funcName] then
+			lib.deprecated[cTableName][funcName] = _G[funcName] -- old function
+			if WOW_PROJECT_ID==WOW_PROJECT_MAINLINE then
+				lib.debug("<deprecated-api>",currentName,cTableName,funcName,"<cTableFuncNotFound>","<currentlyNotDeprecatedInRetail>");
+			end
+		else
+			lib.debug("<deprecated-api>",currentName,cTableName,funcName,"<allFailed>","<dummyAdded>")
+			lib.deprecated[cTableName][funcName] = function() end
+		end
 	end
 
-	setmetatable(lib.deprecated,{
-		__index = function(t,k)
-			lib.debug("deprecated-api missing table",k)
-			local d = setmetatable({__parent=k},dummyMT);
-			rawset(t,k,d);
-			return d;
-		end
-	});
-
-	for k,v in pairs(lib.deprecated)do
-		if type(v)=="table" then
-			v.__parent = k;
-			setmetatable(v,dummyMT)
-		end
-	end
-
-	if WOW_PROJECT_ID~=WOW_PROJECT_MAINLINE then
-		local current = WOW_PROJECT_ID==WOW_PROJECT_CLASSIC and "era" or "classic"
-		for name1, funcs in pairs(lib.deprecated) do
-			if type(funcs)=="function" then
-				if _G[name1] then
-					lib.debug("deprecated-api ("..current..")",name1);
-				end
-			else
-				for name2 in pairs(funcs) do
-					if _G[name1] and type(_G[name1][name2])=="function" then
-						lib.debug("deprecated-api ("..current..")",name1,name2);
-					end
-				end
+	for cTableName, cTableFuncs in pairs(lib.deprecated) do
+		if type(cTableFuncs)=="table" then
+			for funcName, func in pairs(cTableFuncs) do
+				updateFunc(cTableName,funcName,func)
 			end
 		end
 	end
@@ -654,7 +629,6 @@ end
 --== Blizzards new "Secure Value" System is big bullshit!!!!! ==--
 --== Restricts access on more than only combat relevant data. ==--
 do
-
 	local functions = {
 
 		-- HST.BullShitDetector("UnitIsPlayer",unit)
@@ -694,9 +668,11 @@ do
 
 	function lib.BullShitDetector(funcName,...)
 		local result
-		if issecretvalue(...) or canaccessvalue(...)==false then
-			return false;
+		-- check: get problematic function problematic arguments
+		if lib.IsSecretAccessDenied(...) then
+			return false
 		end
+		-- try to execute function and catch errors
 		if type(funcName)~="string" then
 			funcName = "generalTesting"
 		end
@@ -705,13 +681,27 @@ do
 		elseif _G[funcName] then
 			result = {pcall(_G[funcName],...)}
 		end
-		if result and table.remove(result,1) then
-			if issecretvalue(result[1]) or canaccessvalue(result[1])==false then
-				return false;
-			end
+		-- check return value containing problematic values
+		if result and table.remove(result,1) and not lib.IsSecretAccessDenied(result) then
 			return unpack(result)
 		end
 		return false;
+	end
+
+	function lib.IsSecretAccessDenied(...)
+		local args = {...}
+		if #args==1 and type(args[1])=="table" then
+			args = args[1]
+		end
+		if not issecrettable(args) then
+			return false
+		end
+		for _, value in pairs(args) do
+			if issecretvalue(value) and canaccessvalue(value)==false then
+				return true
+			end
+		end
+		return false
 	end
 end
 
